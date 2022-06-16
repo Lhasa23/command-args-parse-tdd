@@ -11,26 +11,38 @@ public class ArgsTest {
     // Map: {-l:[], -p:[8080], -d:[.usr/logs]}
     // happy path:
     // single test:
-    // TODO:  -l => true | null => false
     @Test
-    public void should_set_boolean_option_to_true_if_flag_present() {
+    public void should_set_boolean_option_to_true_if_l_flag_present() {
         BooleanOption option = Args.parse(BooleanOption.class, "-l");
-
         assertTrue(option.logging());
     }
 
     @Test
-    public void should_set_boolean_option_to_true_if_flag_empty() {
+    public void should_set_boolean_option_to_true_if_l_flag_empty() {
         BooleanOption option = Args.parse(BooleanOption.class);
-
         assertFalse(option.logging());
     }
 
     static record BooleanOption(@Option("l") boolean logging) {
     }
 
-    // TODO: -p 8080 => 8080
-    // TODO: -d /usr/logs => /usr/logs
+    @Test
+    public void should_set_int_to_port_if_p_flag_present() {
+        IntOption option = Args.parse(IntOption.class, "-p", "8080");
+        assertEquals(8080, option.port());
+    }
+
+    static record IntOption(@Option("p") int port) {
+    }
+
+    @Test
+    public void should_set_string_to_dir_if_d_flag_present() {
+        StringOption option = Args.parse(StringOption.class, "-d", "/usr/logs");
+        assertEquals("/usr/logs", option.directory());
+    }
+
+    static record StringOption(@Option("d") String directory) {
+    }
     // multi test:
     // TODO: -l -p 8080 -d /usr/logs => logging: true, port: 8080, directory: /usr/logs
     // sad path:
