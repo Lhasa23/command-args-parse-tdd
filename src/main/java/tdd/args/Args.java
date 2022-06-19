@@ -12,7 +12,6 @@ public class Args {
             Constructor<?> constructor = optionsClass.getDeclaredConstructors()[0];
 
             Object[] values = Arrays.stream(constructor.getParameters()).map(it -> parseOption(arguments, it)).toArray();
-            System.out.println(values);
 
             return (T) constructor.newInstance(values);
         } catch (Exception e) {
