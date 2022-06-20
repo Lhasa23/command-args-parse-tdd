@@ -25,18 +25,56 @@ public class Args {
         Object value = null;
 
         if (parameter.getType() == boolean.class) {
-            value = arguments.contains("-" + option.value());
+            value = BooleanParse(arguments, option);
         }
 
         if (parameter.getType() == int.class) {
-            int index = arguments.indexOf("-" + option.value());
-            value = Integer.parseInt(arguments.get(index + 1));
+            value = IntParse(arguments, option);
         }
 
         if (parameter.getType() == String.class) {
-            int index = arguments.indexOf("-" + option.value());
-            value = arguments.get(index + 1);
+            value = StringParse(arguments, option);
         }
         return value;
+    }
+
+    interface OptionsParser {
+        Object parse(List<String> arguments, Option option);
+    }
+
+    private static Object StringParse(List<String> arguments, Option option) {
+        return new StringParser().parse(arguments, option);
+    }
+
+    static class StringParser implements OptionsParser {
+
+        @Override
+        public Object parse(List<String> arguments, Option option) {
+            return arguments.get(arguments.indexOf("-" + option.value()) + 1);
+        }
+    }
+
+    private static Object IntParse(List<String> arguments, Option option) {
+        return new IntParser().parse(arguments, option);
+    }
+
+    static class IntParser implements OptionsParser {
+
+        @Override
+        public Object parse(List<String> arguments, Option option) {
+            return Integer.parseInt(arguments.get(arguments.indexOf("-" + option.value()) + 1));
+        }
+    }
+
+    private static Object BooleanParse(List<String> arguments, Option option) {
+        return new BooleanParser().parse(arguments, option);
+    }
+
+    static class BooleanParser implements OptionsParser {
+
+        @Override
+        public Object parse(List<String> arguments, Option option) {
+            return arguments.contains("-" + option.value());
+        }
     }
 }
