@@ -53,18 +53,6 @@ public class ArgsTest {
     static record MultiOptions(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
-
-    // sad path:
-    // TODO: -l t / -l t f => error
-    // TODO: -p / -p 8080 8081 => error
-    // TODO: -d / -d /usr/logs /usr/ssh => error
-    // default value:
-    // TODO: -l => false
-    // TODO: -p => 0
-    // TODO: -d => ""
-
-
-
     // -g this is a list -d 1 2 -3 5
     @Test
     @Disabled

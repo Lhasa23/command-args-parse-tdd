@@ -2,7 +2,7 @@ package tdd.args;
 
 import java.util.List;
 
-class BooleanParser implements OptionsParser {
+class BooleanOptionParser implements OptionsParser {
 
     @Override
     public Object parse(List<String> arguments, Option option) {
