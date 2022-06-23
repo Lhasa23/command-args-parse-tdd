@@ -1,10 +1,12 @@
 package tdd.args;
 
-public class TooManyArgumentsException extends Exception {
-    public TooManyArgumentsException() {
+public class TooManyArgumentsException extends RuntimeException {
+    Option option;
+    public TooManyArgumentsException(Option option) {
+        this.option = option;
     }
 
     public String getOption() {
-        return "l";
+        return this.option.value();
     }
 }
