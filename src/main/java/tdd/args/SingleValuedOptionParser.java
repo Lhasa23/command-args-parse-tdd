@@ -3,7 +3,7 @@ package tdd.args;
 import java.util.List;
 import java.util.function.Function;
 
-class SingleValuedOptionParser<T> implements OptionsParser {
+class SingleValuedOptionParser<T> implements OptionsParser<T> {
     Function<String, T> valueParser;
 
     public SingleValuedOptionParser(Function<String, T> valueParser) {

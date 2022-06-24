@@ -2,12 +2,14 @@ package tdd.args;
 
 import java.util.List;
 
-class BooleanOptionParser implements OptionsParser {
+class BooleanOptionParser implements OptionsParser<Boolean> {
 
     @Override
-    public Object parse(List<String> arguments, Option option) {
+    public Boolean parse(List<String> arguments, Option option) {
         int index = arguments.indexOf("-" + option.value());
-        if (!arguments.get(index + 1).startsWith("-")) throw new TooManyArgumentsException(option);
+        int nextIndex = index + 1;
+        if (nextIndex < arguments.size() && !arguments.get(nextIndex).startsWith("-"))
+            throw new TooManyArgumentsException(option);
         return index != -1;
     }
 }
