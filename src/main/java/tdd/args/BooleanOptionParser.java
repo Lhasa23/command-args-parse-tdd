@@ -7,8 +7,8 @@ class BooleanOptionParser implements OptionsParser<Boolean> {
     @Override
     public Boolean parse(List<String> arguments, Option option) {
         int index = arguments.indexOf("-" + option.value());
-        int nextIndex = index + 1;
-        if (nextIndex < arguments.size() && !arguments.get(nextIndex).startsWith("-"))
+        int argIndex = index + 1;
+        if (argIndex < arguments.size() && !arguments.get(argIndex).startsWith("-"))
             throw new TooManyArgumentsException(option);
         return index != -1;
     }
