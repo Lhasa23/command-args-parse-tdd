@@ -5,7 +5,6 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class Args {
     public static <T> T parse(Class<T> optionsClass, String... args) {
@@ -16,12 +15,15 @@ public class Args {
             Object[] values = Arrays.stream(constructor.getParameters()).map(it -> parseOption(arguments, it)).toArray();
 
             return (T) constructor.newInstance(values);
+        } catch (IllegalOptionException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     private static Object parseOption(List<String> arguments, Parameter parameter) {
+        if (!parameter.isAnnotationPresent((Option.class))) throw new IllegalOptionException(parameter);
         return PARSER.get(parameter.getType()).parse(arguments, parameter.getAnnotation(Option.class));
     }
 
