@@ -2,6 +2,7 @@ package tdd.args;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 class SingleValuedOptionParser<T> implements OptionsParser<T> {
     T defaultValue;
@@ -15,14 +16,21 @@ class SingleValuedOptionParser<T> implements OptionsParser<T> {
     @Override
     public T parse(List<String> arguments, Option option) {
         int index = arguments.indexOf("-" + option.value());
-        int valueIndex = index + 1;
-        int argIndex = valueIndex + 1;
         if (index == -1) return defaultValue;
-        if (argIndex < arguments.size() && !arguments.get(argIndex).startsWith("-"))
+
+        List<String> values = getOptionsValue(arguments, index + 1);
+
+        if (values.size() > 1)
             throw new TooManyArgumentsException(option);
-        if (valueIndex == arguments.size() || arguments.get(valueIndex).startsWith("-"))
+        if (values.size() < 1)
             throw new InsufficientArgumentException(option);
-        String value = arguments.get(valueIndex);
+        String value = values.get(0);
         return valueParser.apply(value);
+    }
+
+    private List<String> getOptionsValue(List<String> arguments, int valueIndex) {
+        int followingFlag = IntStream.range(valueIndex, arguments.size()).filter(it -> arguments.get(it).startsWith("-")).findFirst().orElse(arguments.size());
+        List<String> values = arguments.subList(valueIndex, followingFlag);
+        return values;
     }
 }
