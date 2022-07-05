@@ -5,32 +5,35 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 
 class SingleValuedOptionParser<T> implements OptionsParser<T> {
-    T defaultValue;
-    Function<String, T> valueParser;
+	T defaultValue;
+	Function<String, T> valueParser;
 
-    public SingleValuedOptionParser(T defaultValue, Function<String, T> valueParser) {
-        this.defaultValue = defaultValue;
-        this.valueParser = valueParser;
-    }
+	public SingleValuedOptionParser(T defaultValue, Function<String, T> valueParser) {
+		this.defaultValue = defaultValue;
+		this.valueParser = valueParser;
+	}
 
-    @Override
-    public T parse(List<String> arguments, Option option) {
-        int index = arguments.indexOf("-" + option.value());
-        if (index == -1) return defaultValue;
+	@Override
+	public T parse(List<String> arguments, Option option) {
+		int index = arguments.indexOf("-" + option.value());
+		if (index == -1)
+			return defaultValue;
 
-        List<String> values = getOptionsValue(arguments, index + 1);
+		List<String> values = getOptionsValue(arguments, index + 1);
 
-        if (values.size() > 1)
-            throw new TooManyArgumentsException(option);
-        if (values.size() < 1)
-            throw new InsufficientArgumentException(option);
-        String value = values.get(0);
-        return valueParser.apply(value);
-    }
+		if (values.size() > 1)
+			throw new TooManyArgumentsException(option);
+		if (values.size() < 1)
+			throw new InsufficientArgumentException(option);
+		String value = values.get(0);
+		return valueParser.apply(value);
+	}
 
-    private List<String> getOptionsValue(List<String> arguments, int valueIndex) {
-        int followingFlag = IntStream.range(valueIndex, arguments.size()).filter(it -> arguments.get(it).startsWith("-")).findFirst().orElse(arguments.size());
-        List<String> values = arguments.subList(valueIndex, followingFlag);
-        return values;
-    }
+	static List<String> getOptionsValue(List<String> arguments, int valueIndex) {
+		return arguments.subList(valueIndex,
+								 IntStream.range(valueIndex, arguments.size())
+										 .filter(it -> arguments.get(it).startsWith("-"))
+										 .findFirst()
+										 .orElse(arguments.size()));
+	}
 }
