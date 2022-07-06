@@ -1,6 +1,10 @@
 package tdd.args;
 
+import tdd.args.exceptions.InsufficientArgumentException;
+import tdd.args.exceptions.TooManyArgumentsException;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -15,18 +19,21 @@ class SingleValuedOptionParser<T> implements OptionsParser<T> {
 
 	@Override
 	public T parse(List<String> arguments, Option option) {
+		return values(arguments, option, 1).map(it -> valueParser.apply(it.get(0))).orElse(defaultValue);
+	}
+
+	static Optional<List<String>> values(List<String> arguments, Option option, int expectedSize) {
 		int index = arguments.indexOf("-" + option.value());
+
 		if (index == -1)
-			return defaultValue;
+			return Optional.empty();
 
 		List<String> values = getOptionsValue(arguments, index + 1);
-
-		if (values.size() > 1)
+		if (values.size() > expectedSize)
 			throw new TooManyArgumentsException(option);
-		if (values.size() < 1)
+		if (values.size() < expectedSize)
 			throw new InsufficientArgumentException(option);
-		String value = values.get(0);
-		return valueParser.apply(value);
+		return Optional.of(values);
 	}
 
 	static List<String> getOptionsValue(List<String> arguments, int valueIndex) {
